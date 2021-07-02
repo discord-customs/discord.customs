@@ -1,0 +1,7 @@
+README.md
+setup.py
+discord.customs.egg-info/PKG-INFO
+discord.customs.egg-info/SOURCES.txt
+discord.customs.egg-info/dependency_links.txt
+discord.customs.egg-info/top_level.txt
+discord/ext/customs/commands/__init__.py

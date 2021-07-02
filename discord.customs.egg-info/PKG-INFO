@@ -1,0 +1,49 @@
+Metadata-Version: 2.1
+Name: discord.customs
+Version: 1.0.3
+Summary: A small pypi project, that adds more extensions to your discord.py bot.
+Home-page: https://github.com/FrostiiWeeb/
+Author: Alex Hutz
+Author-email: frostiiweeb@gmail.com
+License: MIT
+Keywords: extensions,dpy,discord.py,discord
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Software Development :: Build Tools
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Description-Content-Type: text/markdown
+
+## discord.customs
+
+Some customized-extensions you can add to your discord.py bot.
+
+# Installation
+
+```shell
+python3 -m pip install discord.ext.customs
+```
+
+## Example
+
+```python
+import discord
+from discord.ext.customs import commands
+
+# Enable gateway intents on the developer portal
+
+bot = commands.Bot(intents=discord.Intents.all())
+
+@bot.command(name="some_command")
+async def some_command(ctx):
+    await ctx.send(f"Hello.")
+
+bot.run("Token Here")
+```
+
+NOTE: Some of these extensions already exist in the library, so i've added more functionality to them.
+
