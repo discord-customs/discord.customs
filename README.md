@@ -5,7 +5,7 @@ Some customized-extensions you can add to your discord.py bot.
 # Installation
 
 ```shell
-python3 -m pip install discord.ext.customs
+python3 -m pip install discord.customs
 ```
 
 ## Example
