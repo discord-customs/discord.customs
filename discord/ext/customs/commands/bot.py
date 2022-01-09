@@ -27,21 +27,6 @@ class Bot(discord.Client):
     async def process_commands(self, message : discord.Message):
         context = await self.get_context(message)
         await self.invoke(ctx=context)  
-
-    async def invoke(self, ctx: Context):
-        try:
-            regex = re.compile(f'^{self.command_prefix}')
-            ## regex=re.compile('^hello|^john|^world')
-            if re.match(regex, ctx.message.content):
-                original = ctx.message.content
-                stripped = original.strip(self.command_prefix)
-                splitted = stripped.split(" ")
-                needed = {}
-                for name, value in self.commands._dict:
-                    if name in splitted:
-                        pass
-        except Exception as e:
-            raise CommandError(e)
        
 
     async def invoke(self, ctx):
