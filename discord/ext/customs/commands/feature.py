@@ -23,4 +23,4 @@ class Feature():
 		self.bot = bot
 
 	async def add_command(self, func : typing.Awaitable, name : str = None):
-		return self.bot.add_command(func, name or func.__name__, func.__doc__ or None)
+		return self.bot.add_feature_command(func, name or func.__name__, func.__doc__ or None)

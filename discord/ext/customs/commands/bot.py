@@ -62,9 +62,6 @@ class Bot(discord.Client):
         except Exception as e:
             return await raise_error(CommandError(f"{e}", status_code=1, traceback="Error"))
 
-    def interegate_feature(self):
-        pass
-
     def add_command(self, func : typing.Callable, name : str, description : str):
         if not isinstance(func, typing.Callable):
             raise CommandInvokeError(f'Failed to add command {name}: Not Function')
