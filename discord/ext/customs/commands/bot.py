@@ -13,7 +13,14 @@ class Bot(discord.Client):
     def __init__(self, command_prefix : str = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.command_prefix = command_prefix
-        self.commands = cset()         
+        self.commands = cset()   
+        self.features = cset()   
+
+    def get_feature(self, name : str):
+        data = self.features.get(name)
+        if not data:
+            return None
+        return data
  
     def get_command(self, name : str):
         data = self.commands.get(name)
@@ -54,6 +61,9 @@ class Bot(discord.Client):
 
         except Exception as e:
             return await raise_error(CommandError(f"{e}", status_code=1, traceback="Error"))
+
+    def interegate_feature(self):
+        pass
 
     def add_command(self, func : typing.Callable, name : str, description : str):
         if not isinstance(func, typing.Callable):
