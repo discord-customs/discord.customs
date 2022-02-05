@@ -2,7 +2,7 @@ import asyncio
 
 
 class Set:
-    def __init__(self, args):
+    def __init__(self):
         self._set = set()
         self._dict = dict()
 
@@ -12,7 +12,7 @@ class Set:
     def get(self, name):
         data = self._dict.get(name)
         if data is None:
-            return data
+            return None
         return data
 
     def set(self, name : str, value : str = None):

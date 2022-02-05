@@ -1,10 +1,12 @@
-from discord.ext.customs import commands
+from discord.ext.customs.commands import Context, Bot
 import discord
+from discord.ext.customs.commands import DefaultHelp
 
-bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+bot = Bot(command_prefix="!", intents=discord.Intents.all())
 
 @bot.command()
-async def hello(ctx):
-    await ctx.reply("Hello!")
+async def hello(ctx : Context):
+    return await ctx.ui(help_cls=DefaultHelp)
+
 
 bot.run("token")
