@@ -15,7 +15,7 @@ Installing
 
 **Python 3.8 or higher is required**
 
-To install the library without full voice support, you can just run the following command:
+To install the library from pypi, simply do:
 
 .. code:: sh
 
@@ -31,7 +31,7 @@ To install the development version, do the following:
 .. code:: sh
 
     $ git clone https://github.com/FrostiiWeeb/discord.customs
-    $ cd discord.py
+    $ cd discord.customs
     $ python3 -m pip install -U .
 
 Examples
