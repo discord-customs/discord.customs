@@ -6,7 +6,7 @@ import re
 with open('discord/ext/customs/commands/__init__.py', 'r') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
-with open("README.md", "r") as f:
+with open("README.rst", "r") as f:
 	long_desc = f.read()
 
 setup(
