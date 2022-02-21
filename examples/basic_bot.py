@@ -1,12 +1,27 @@
 from discord.ext.customs import commands
 import discord
-from discord.ext.customs.commands import DefaultHelp
 
-bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+class Simple(commands.Feature):
+    def __init__(self, bot) -> None:
+        super().__init__(bot)
+        commands = [self.hello, self.bye]
+        for cmd in commands:
+            self.create_command(cmd)
 
-@bot.command()
-async def hello(ctx : commands.Context):
-    return await ctx.ui(help_cls=DefaultHelp)
+    async def hello(self, ctx):
+        return await ctx.send("hi")
 
+    async def bye(self, ctx: commands.Context):
+        return await ctx.reply(f"Bye, {ctx.author.name}")
+
+bot = commands.Bot(command_prefix="oahx ", intents=discord.Intents.all())
+bot.integrate_feature(Simple(bot))
+
+async def hello(ctx: commands.SlashContext):
+    return await ctx.command.respond(ctx, commands.SlashResponse(content="Hi."))
+
+@bot.event
+async def on_ready():
+    await bot.create_slash("hello", hello)
 
 bot.run("token")

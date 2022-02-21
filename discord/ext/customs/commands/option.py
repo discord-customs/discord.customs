@@ -1,7 +1,7 @@
 import discord
 from typing import *
 
-class Option(discord.SelectOption):
+class SelectOption(discord.SelectOption):
 	def __init__(self, *, label: str, value: str = ..., description: Optional[str] = None, emoji: Optional[Union[str, discord.Emoji, discord.PartialEmoji]] = None, default: bool = False) -> None:
 		super().__init__(label=label, value=value, description=description, emoji=emoji, default=default)
 		self._label = label
@@ -16,7 +16,7 @@ class Option(discord.SelectOption):
 
 
 class Select(discord.ui.Select):
-	def __init__(self, ctx, options : List[Option], callback : Coroutine):
+	def __init__(self, ctx, options : List[SelectOption], callback : Coroutine):
 		self.context = ctx
 		self.callback_function = callback
 		super().__init__(
