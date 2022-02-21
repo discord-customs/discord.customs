@@ -1,6 +1,7 @@
 from discord.ext.customs import commands
 import discord
 
+
 class Simple(commands.Feature):
     def __init__(self, bot) -> None:
         super().__init__(bot)
@@ -14,14 +15,18 @@ class Simple(commands.Feature):
     async def bye(self, ctx: commands.Context):
         return await ctx.reply(f"Bye, {ctx.author.name}")
 
+
 bot = commands.Bot(command_prefix="oahx ", intents=discord.Intents.all())
 bot.integrate_feature(Simple(bot))
+
 
 async def hello(ctx: commands.SlashContext):
     return await ctx.command.respond(ctx, commands.SlashResponse(content="Hi."))
 
+
 @bot.event
 async def on_ready():
     await bot.create_slash("hello", hello)
+
 
 bot.run("token")

@@ -1,5 +1,6 @@
 import discord, typing
 
+
 class Trash(discord.ui.Button):
     def __init__(self, ctx, help):
         self.context = ctx
@@ -57,9 +58,7 @@ class DropdownView(discord.ui.View):
         await interaction.message.delete()
 
     async def interaction_check(self, interaction: discord.Interaction):
-        if interaction.user.id in [
-            self.context.author.id
-		]:
+        if interaction.user.id in [self.context.author.id]:
             return True
         await interaction.response.send_message(
             "This command wasnt ran by you, sorry!", ephemeral=True
@@ -72,13 +71,13 @@ class DropdownView(discord.ui.View):
 
 
 class DefaultHelp:
-	def __init__(self, ctx) -> None:
-		self.context = ctx
-		
-	async def send_bot_help(self):
-		view : DropdownView = DropdownView(ctx=self.context, help=self)
-		embedd = discord.Embed(
+    def __init__(self, ctx) -> None:
+        self.context = ctx
+
+    async def send_bot_help(self):
+        view: DropdownView = DropdownView(ctx=self.context, help=self)
+        embedd = discord.Embed(
             title="Help",
             description="```\n[] -> optional\n<> -> required```",
         )
-		view.message = await self.context.send(embed=embedd, view=view)
+        view.message = await self.context.send(embed=embedd, view=view)

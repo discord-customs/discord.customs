@@ -40,21 +40,37 @@ class Context(object):
             return "/"
         return self.bot.command_prefix
 
-    async def ui(self, base : typing.Union[str, discord.Embed], context : Select = None, send_help : bool = True, help_cls = None):
+    async def ui(
+        self,
+        base: typing.Union[str, discord.Embed],
+        context: Select = None,
+        send_help: bool = True,
+        help_cls=None,
+    ):
         if not send_help:
             if not context:
                 raise RuntimeError("Select context not specified")
-            return await self.send(base, view=View(items=[context]), reply=True) if isinstance(base, str) else await self.send(embed=base, view=View(items=[context]), reply=True)
+            return (
+                await self.send(base, view=View(items=[context]), reply=True)
+                if isinstance(base, str)
+                else await self.send(embed=base, view=View(items=[context]), reply=True)
+            )
         if not help_cls:
             raise RuntimeError("Help class not specified")
         cls = help_cls(ctx=self)
         return await cls.send_bot_help()
 
-    async def edit(self, message : discord.Message, content : str = None, *args, **kwargs):
+    async def edit(
+        self, message: discord.Message, content: str = None, *args, **kwargs
+    ):
         return await message.edit(content, *args, **kwargs)
 
-    async def send(self, content: str = None, reply : bool = False, *args, **kwargs):
-        return await self.channel.send(content, *args, **kwargs) if not reply else await self.reply(content, *args, **kwargs)
+    async def send(self, content: str = None, reply: bool = False, *args, **kwargs):
+        return (
+            await self.channel.send(content, *args, **kwargs)
+            if not reply
+            else await self.reply(content, *args, **kwargs)
+        )
 
     async def reply(self, content: str = None, *args, **kwargs):
         return await self.message.reply(content, *args, **kwargs)

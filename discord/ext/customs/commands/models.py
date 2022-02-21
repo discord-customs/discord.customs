@@ -1,11 +1,11 @@
 import asyncio
 
 
-class Skipping():
-    def __init__(self, message : str) -> None:
+class Skipping:
+    def __init__(self, message: str) -> None:
         self.msg = message
 
-    def skip(self, msg : str):
+    def skip(self, msg: str):
         if self.msg.startswith(msg):
             try:
                 msg = self.msg.split(msg)
@@ -14,6 +14,7 @@ class Skipping():
                 return None
         else:
             return None
+
 
 class Set:
     def __init__(self):
@@ -27,7 +28,7 @@ class Set:
         data = self._dict.get(name)
         return data
 
-    def set(self, name : str, value : str = None):
+    def set(self, name: str, value: str = None):
         try:
             self._dict[name] = value
             self._set.add(value)
