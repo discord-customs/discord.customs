@@ -1,5 +1,8 @@
 from discord.ext.customs import commands
 import discord
+import typing
+
+from discord.ext.customs.commands.slash import SlashOption
 
 
 class Simple(commands.Feature):
@@ -16,17 +19,19 @@ class Simple(commands.Feature):
         return await ctx.reply(f"Bye, {ctx.author.name}")
 
 
-bot = commands.Bot(command_prefix="oahx ", intents=discord.Intents.all())
+bot = commands.Bot(
+    command_prefix="!",
+    intents=discord.Intents.all(),
+    application_id=844213992955707452,  # replace with your application id
+)
 bot.integrate_feature(Simple(bot))
 
 
-async def hello(ctx: commands.SlashContext):
-    return await ctx.command.respond(ctx, commands.SlashResponse(content="Hi."))
-
-
-@bot.event
-async def on_ready():
-    await bot.create_slash("hello", hello)
+@bot.slash_command(
+    options=[SlashOption(commands.SlashOptionType.string, "what", "what to say")]
+)
+async def hello(ctx: commands.SlashContext, what: commands.SlashOptionValue):
+    await ctx.respond(commands.SlashResponse(content=what.value))
 
 
 bot.run("token")

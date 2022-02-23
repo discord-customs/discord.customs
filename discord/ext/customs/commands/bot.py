@@ -1,3 +1,4 @@
+from email.headerregistry import ParameterizedMIMEHeader
 from discord.ext.commands.errors import CommandNotFound
 from .exceptions import *
 import typing, discord
@@ -21,13 +22,75 @@ class Bot(discord.Client):
         self.commands = models.Set()
         self.features = models.Set()
         self.slash_commands = models.Set()
-        self.queue_slash = []
+        self.queue_slash = list()
         self.slash_created = False
 
-    async def on_socket_raw_receive(self, msg: dict):
-        msg = json.loads(msg)
-        if msg["t"] == "INTERACTION_CREATE":
-            return await self.interaction_created(msg)
+    def slash_command(
+        self,
+        name: str = None,
+        slash_type: int = SlashType.slash,
+        guild_id: int = None,
+        description: str = "A slash command.",
+        options: List[SlashOption] = None,
+    ) -> typing.Callable:
+        def wrapper(callback: typing.Callable):
+            application_id = self.application_id
+            route = Route(
+                "POST",
+                f"/applications/{application_id}/commands"
+                if not guild_id
+                else f"/applications/{application_id}/guilds/{guild_id}/commands",
+            )
+            data = {
+                "type": slash_type,
+                "name": name or callback.__name__,
+                "options": [],
+            }
+            nonlocal description
+            if slash_type in (2, 3):
+                description = None
+            data["description"] = description
+            if options:
+                for option in options:
+                    option_payload = {
+                        "name": option.name,
+                        "description": option.description,
+                        "type": option.type,
+                        "required": option.required,
+                        "choices": [],
+                    }
+                    if option.choices:
+                        for choice in option.choices:
+                            option_payload["choices"].append(
+                                {"name": choice.name, "value": choice.value}
+                            )
+                    data["options"].append(option_payload)
+            self.queue_slash.append(
+                self.http.request(
+                    route, headers={"Content-Type": "application/json"}, json=data
+                )
+            )
+            slash = SlashCommand(name or callback.__name__, callback, description)
+            self.slash_commands.set(name or callback.__name__, slash)
+
+        return wrapper
+
+    async def on_ready(self):
+        try:
+            for request in self.queue_slash:
+                self.slash_created = True
+                await request
+        except RuntimeError:
+            self.slash_created = True
+        while True:
+
+            def check(msg: str):
+                msg = json.loads(msg)
+                return msg["t"] == "INTERACTION_CREATE" and msg["d"]["type"] == 2
+
+            msg: str = await self.wait_for("socket_raw_receive", check=check)
+            msg: dict = json.loads(msg)
+            await self.interaction_created(msg)
 
     async def get_slash_context(
         self, interaction: discord.Interaction, command: SlashCommand
@@ -36,35 +99,20 @@ class Bot(discord.Client):
 
     async def interaction_created(self, msg: dict):
         while self.slash_created is True:
-            interaction = discord.Interaction(state=self._connection, data=msg["d"])
-            command = self.slash_commands.get((msg["d"]["data"])["name"])
+            try:
+                interaction = discord.Interaction(state=self._connection, data=msg["d"])
+                command = self.slash_commands.get((msg["d"]["data"])["name"])
+            except KeyError:
+                ...
             if not command:
                 raise CommandNotFound(f"Slash command \"{(msg['d']['data'])['name']}\"")
+            parameters = {}
+            if msg["d"]["data"]["options"]:
+                for option in msg["d"]["data"]["options"]:
+                    option_value = SlashOptionValue(option["name"], option["value"])
+                    parameters[option_value.name] = option_value
             context = await self.get_slash_context(interaction, command)
-            return await context.command(context)
-
-    async def create_slash(
-        self,
-        name: str,
-        callback,
-        type: int = 1,
-        description: str = "A slash cmd.",
-        guild_id: int = None,
-    ):
-        application_id = (await self.application_info()).id
-        route = Route(
-            "POST",
-            f"/applications/{application_id}/commands"
-            if not guild_id
-            else f"/applications/{application_id}/guilds/{guild_id}/commands",
-        )
-        data = {"type": type, "name": name, "description": description}
-        posted = await self.http.request(
-            route, headers={"Content-Type": "application/json"}, json=data
-        )
-        slash = SlashCommand(name, callback, description)
-        self.slash_commands.set(name, slash)
-        self.slash_created = True
+            return await context.command.callback(context, **parameters)
 
     def reload_feature(self, name: str, *args, **kwargs):
         f: Feature = self.features.get(name)

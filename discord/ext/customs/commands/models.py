@@ -1,4 +1,38 @@
 import asyncio
+import typing
+from functools import wraps
+
+
+class Sequence:
+    def __init__(self) -> None:
+        self._store: typing.Dict[typing.Union[str, int], typing.Any] = {}
+        self.index = 0
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if self.index > len(self._store) - 1:
+            raise StopAsyncIteration
+        response = self._store[self.index]
+        return response
+
+    def append(
+        self,
+        value: typing.Any,
+        key: typing.Optional[typing.Union[str, int]] = None,
+    ):
+        self._store[key or self.index] = value
+        self.index += 1
+
+    def add(self, *args, **kwargs):
+        return self.append(*args, **kwargs)
+
+    def remove(
+        self,
+        key: typing.Optional[typing.Union[str, int]] = None,
+    ):
+        return self._store.pop(key or self.index)
 
 
 class Skipping:
