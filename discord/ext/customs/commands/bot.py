@@ -25,15 +25,15 @@ class Bot(discord.Client):
         self.queue_slash = list()
         self.slash_created = False
 
-    def slash_command(
+    def add_slash(
         self,
         name: str = None,
         slash_type: int = SlashType.slash,
         guild_id: int = None,
         description: str = "A slash command.",
         options: List[SlashOption] = None,
-    ) -> typing.Callable:
-        def wrapper(callback: typing.Callable):
+    ):
+        def wrapper(callback):
             application_id = self.application_id
             route = Route(
                 "POST",
@@ -72,6 +72,28 @@ class Bot(discord.Client):
             )
             slash = SlashCommand(name or callback.__name__, callback, description)
             self.slash_commands.set(name or callback.__name__, slash)
+
+        return wrapper()
+
+    async def update_slash(self):
+        return await self.on_ready()
+
+    def slash_command(
+        self,
+        name: str = None,
+        slash_type: int = SlashType.slash,
+        guild_id: int = None,
+        description: str = "A slash command.",
+        options: List[SlashOption] = None,
+    ) -> typing.Callable:
+        def wrapper(callback: typing.Callable):
+            self.add_slash(
+                name=name,
+                slash_type=slash_type,
+                guild_id=guild_id,
+                description=description,
+                options=options,
+            )
 
         return wrapper
 
