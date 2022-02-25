@@ -1,7 +1,7 @@
 discord.customs
 ================
 
-.. image:: https://cdn.discordapp.com/icons/789892434405490718/f5c09a1bd7453dc3968944e02e585350.png?size=300
+.. image:: https://cdn.discordapp.com/icons/887354138927718501/67cbe4cce5598ea9a813217a9cde049f.png?size=300
     :align: center
     :alt: Logo
 
