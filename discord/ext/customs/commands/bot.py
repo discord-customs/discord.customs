@@ -73,7 +73,7 @@ class Bot(discord.Client):
             slash = SlashCommand(name or callback.__name__, callback, description)
             self.slash_commands.set(name or callback.__name__, slash)
 
-        return wrapper()
+        return wrapper
 
     async def update_slash(self):
         return await self.on_ready()
@@ -93,11 +93,12 @@ class Bot(discord.Client):
                 guild_id=guild_id,
                 description=description,
                 options=options,
-            )
+            )(callback)
 
         return wrapper
 
     async def on_ready(self):
+        self.dispatch("startup")
         try:
             for request in self.queue_slash:
                 self.slash_created = True
@@ -131,10 +132,21 @@ class Bot(discord.Client):
             parameters = {}
             if msg["d"]["data"]["options"]:
                 for option in msg["d"]["data"]["options"]:
+                    option_type = option["type"]
+                    if option_type == SlashOptionType.user:
+                        user = await super().fetch_user(int(option["value"]))
+                        option["value"] = user
                     option_value = SlashOptionValue(option["name"], option["value"])
                     parameters[option_value.name] = option_value
             context = await self.get_slash_context(interaction, command)
-            return await context.command.callback(context, **parameters)
+            try:
+                return await context.command.callback(context, **parameters)
+            except Exception as e:
+                context.bot.dispatch("command_error", context, error=e.with_traceback(e.__traceback__))
+
+    async def on_command_error(self, ctx: SlashContext, error):
+        import traceback
+        traceback.print_exc()
 
     def reload_feature(self, name: str, *args, **kwargs):
         f: Feature = self.features.get(name)

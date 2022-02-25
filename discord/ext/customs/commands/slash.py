@@ -64,7 +64,6 @@ class SlashChoice:
         self.name = name
         self.value = value
 
-
 class SlashOption:
     def __init__(
         self,
