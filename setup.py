@@ -4,9 +4,7 @@ from setuptools import setup
 import re
 
 with open("discord/ext/customs/commands/__init__.py", "r") as f:
-    version = re.search(
-        r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
-    ).group(1)
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 with open("README.rst", "r") as f:
     long_desc = f.read()

@@ -12,11 +12,19 @@ from discord.ext.commands.errors import CommandNotFound
 from . import models
 from .models import Skipping
 from .feature import Feature
-from .slash import SlashCommand, SlashContext, SlashOptionValue, SlashOption, SlashOptionType, SlashChoice, SlashType, SlashResponse
+from .slash import (
+    SlashCommand,
+    SlashContext,
+    SlashOptionValue,
+    SlashOption,
+    SlashOptionType,
+    SlashChoice,
+    SlashType,
+    SlashResponse,
+)
 from .exceptions import *
 from .context import Context
 from .command import Command
-
 
 
 class Bot(discord.Client):
@@ -65,15 +73,9 @@ class Bot(discord.Client):
                     }
                     if option.choices:
                         for choice in option.choices:
-                            option_payload["choices"].append(
-                                {"name": choice.name, "value": choice.value}
-                            )
+                            option_payload["choices"].append({"name": choice.name, "value": choice.value})
                     data["options"].append(option_payload)
-            self.queue_slash.append(
-                self.http.request(
-                    route, headers={"Content-Type": "application/json"}, json=data
-                )
-            )
+            self.queue_slash.append(self.http.request(route, headers={"Content-Type": "application/json"}, json=data))
             slash = SlashCommand(name or callback.__name__, callback, description)
             self.slash_commands.set(name or callback.__name__, slash)
 
@@ -119,9 +121,7 @@ class Bot(discord.Client):
             msg: dict = json.loads(msg)
             await self.interaction_created(msg)
 
-    async def get_slash_context(
-        self, interaction: discord.Interaction, command: SlashCommand
-    ):
+    async def get_slash_context(self, interaction: discord.Interaction, command: SlashCommand):
         return SlashContext(bot=self, interaction=interaction, command=command)
 
     async def interaction_created(self, msg: dict):
@@ -150,6 +150,7 @@ class Bot(discord.Client):
 
     async def on_command_error(self, ctx: SlashContext, error):
         import traceback
+
         traceback.print_exc()
 
     def reload_feature(self, name: str, *args, **kwargs):
@@ -191,11 +192,7 @@ class Bot(discord.Client):
             skip = skipper.skip(self.command_prefix)
             if skip:
                 ctx.message.content = skip
-                found_command = [
-                    cmd
-                    for cmd in self.commands._dict
-                    if ctx.message.content.startswith(cmd)
-                ]
+                found_command = [cmd for cmd in self.commands._dict if ctx.message.content.startswith(cmd)]
                 if not found_command:
                     raise CommandNotFound(f'Command "{ctx.message.content}" not found')
                 found_command = found_command[0]
@@ -206,11 +203,7 @@ class Bot(discord.Client):
                 args = content.split(" ")
                 command = self.commands.get(found_command)
                 command_parameters = [
-                    param
-                    for param in (
-                        inspect.signature(command.callback)
-                    )._parameters.keys()
-                    if param != "ctx"
+                    param for param in (inspect.signature(command.callback))._parameters.keys() if param != "ctx"
                 ]
                 needed_parameters = command_parameters
                 parameters = dict(zip(needed_parameters, args))
@@ -220,13 +213,9 @@ class Bot(discord.Client):
                 return
         except Exception as e:
             traceback.print_exc()
-            return await raise_error(
-                CommandError(f"{e}", status_code=1, traceback="Error")
-            )
+            return await raise_error(CommandError(f"{e}", status_code=1, traceback="Error"))
 
-    def add_command(
-        self, func: typing.Callable, name: str, description: str, feature=None
-    ):
+    def add_command(self, func: typing.Callable, name: str, description: str, feature=None):
         if not isinstance(func, typing.Callable):
             raise CommandInvokeError(f"Failed to add command {name}: Not Function")
         params = [param for param in (inspect.signature(func))._parameters.keys()]
@@ -246,9 +235,7 @@ class Bot(discord.Client):
             for param in params:
                 param_names.append(Parameter(name=param))
             first_param = param_names[0]
-            command = Command(
-                name=name, callback=func, description=description, args=param_names
-            )
+            command = Command(name=name, callback=func, description=description, args=param_names)
             cmd = self.commands.get(name)
             return self.commands.set(name=name, value=command)
 

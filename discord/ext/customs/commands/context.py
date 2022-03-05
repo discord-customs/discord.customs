@@ -60,9 +60,7 @@ class Context(object):
         cls = help_cls(ctx=self)
         return await cls.send_bot_help()
 
-    async def edit(
-        self, message: discord.Message, content: str = None, *args, **kwargs
-    ):
+    async def edit(self, message: discord.Message, content: str = None, *args, **kwargs):
         return await message.edit(content, *args, **kwargs)
 
     async def send(self, content: str = None, reply: bool = False, *args, **kwargs):

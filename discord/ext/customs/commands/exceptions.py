@@ -7,9 +7,7 @@ class Error:
     Common base class for all exceptions.
     """
 
-    def __init__(
-        self, message: typing.AnyStr, status_code: int, traceback: str
-    ) -> None:
+    def __init__(self, message: typing.AnyStr, status_code: int, traceback: str) -> None:
         self.err = f"{traceback}: (status code: {status_code}) {message}"
         self.st = status_code
 

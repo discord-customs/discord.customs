@@ -64,6 +64,7 @@ class SlashChoice:
         self.name = name
         self.value = value
 
+
 class SlashOption:
     def __init__(
         self,
@@ -106,9 +107,7 @@ class SlashCommand(Command):
             feature (Feature, optional): _description_. Defaults to None.
         """
         super().__init__(name, callback, description, args, feature)
-        self.responder: discord.webhook.async_.AsyncWebhookAdapter = (
-            discord.webhook.async_.async_context.get()
-        )
+        self.responder: discord.webhook.async_.AsyncWebhookAdapter = discord.webhook.async_.async_context.get()
         self.data: dict = {"type": 4}
         self.options = options
 
@@ -119,12 +118,8 @@ class SlashCommand(Command):
         self.responded = True
         interaction: discord.Interaction = ctx.interaction
         self.data["data"] = response.to_dict()
-        route = discord.http.Route(
-            "POST", f"/interactions/{interaction.id}/{interaction.token}/callback"
-        )
-        await ctx.bot.http.request(
-            route, headers={"Content-Type": "application/json"}, json=self.data
-        )
+        route = discord.http.Route("POST", f"/interactions/{interaction.id}/{interaction.token}/callback")
+        await ctx.bot.http.request(route, headers={"Content-Type": "application/json"}, json=self.data)
         return await self.get_original_response(ctx)
 
     async def get_original_response(self, ctx):
@@ -133,9 +128,7 @@ class SlashCommand(Command):
             "GET",
             f"/webhooks/{(await ctx.bot.application_info()).id}/{interaction.token}/messages/@original",
         )
-        resp = await ctx.bot.http.request(
-            route, headers={"Content-Type": "application/json"}
-        )
+        resp = await ctx.bot.http.request(route, headers={"Content-Type": "application/json"})
         return discord.Message(
             state=ctx.bot._connection,
             channel=(await ctx.bot.fetch_channel(resp["channel_id"])),
@@ -149,9 +142,7 @@ class SlashCommand(Command):
             "PATCH",
             f"/webhooks/{(await ctx.bot.application_info()).id}/{interaction.token}/messages/@original",
         )
-        resp = await ctx.bot.http.request(
-            route, headers={"Content-Type": "application/json"}, json=data
-        )
+        resp = await ctx.bot.http.request(route, headers={"Content-Type": "application/json"}, json=data)
         return discord.Message(
             state=ctx.bot._connection,
             channel=(await ctx.bot.fetch_channel(resp["channel_id"])),
@@ -164,9 +155,7 @@ class SlashCommand(Command):
             "DELETE",
             f"/webhooks/{(await ctx.bot.application_info()).id}/{interaction.token}/messages/@original",
         )
-        resp = await ctx.bot.http.request(
-            route, headers={"Content-Type": "application/json"}
-        )
+        resp = await ctx.bot.http.request(route, headers={"Content-Type": "application/json"})
 
 
 class SlashContext:

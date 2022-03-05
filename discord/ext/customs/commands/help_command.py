@@ -9,9 +9,7 @@ class Trash(discord.ui.Button):
         super().__init__(label="Trash", row=1, emoji="🗑️")
 
     async def callback(self, interaction: discord.Interaction):
-        await interaction.response.edit_message(
-            "_Original message deleted_", embed=None
-        )
+        await interaction.response.edit_message("_Original message deleted_", embed=None)
 
 
 class Dropdown(discord.ui.Select):
@@ -19,9 +17,7 @@ class Dropdown(discord.ui.Select):
         self.context = ctx
         self.help = help
         options = [
-            discord.SelectOption(
-                label="Home", description="The main menu.", value="Home"
-            ),
+            discord.SelectOption(label="Home", description="The main menu.", value="Home"),
         ]
         super().__init__(
             placeholder="Where do you wanna go",
@@ -60,9 +56,7 @@ class DropdownView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user.id in [self.context.author.id]:
             return True
-        await interaction.response.send_message(
-            "This command wasnt ran by you, sorry!", ephemeral=True
-        )
+        await interaction.response.send_message("This command wasnt ran by you, sorry!", ephemeral=True)
         return False
 
     async def on_timeout(self):
