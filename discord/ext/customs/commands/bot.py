@@ -1,18 +1,22 @@
-from email.headerregistry import ParameterizedMIMEHeader
-from discord.ext.commands.errors import CommandNotFound
-from .exceptions import *
-import typing, discord
-from .command import Command
-from .context import Context
-from .params import Parameter
-import inspect, discord
-from . import models
 import traceback
-from .feature import Feature
-from .slash import *
-from discord.http import Route
 import json
+import inspect
+
+from typing import *
+
+import discord
+from discord.http import Route
+
+from discord.ext.commands.errors import CommandNotFound
+
+from . import models
 from .models import Skipping
+from .feature import Feature
+from .slash import SlashCommand, SlashContext, SlashOptionValue, SlashOption, SlashOptionType, SlashChoice, SlashType, SlashResponse
+from .exceptions import *
+from .context import Context
+from .command import Command
+
 
 
 class Bot(discord.Client):
