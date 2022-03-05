@@ -25,6 +25,7 @@ from .slash import (
 from .exceptions import *
 from .context import Context
 from .command import Command
+from .params import Parameter
 
 
 class Bot(discord.Client):
